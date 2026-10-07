@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:fitsSystemWindows="true"
     android:background="#FF1E1E1E">
 
     <LinearLayout
@@ -59,6 +60,7 @@
         android:importantForAutofill="no" />
 
     <HorizontalScrollView
+        android:id="@+id/keyBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#FF252526"
