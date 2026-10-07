@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Applies the minimal `eg` command integration onto a checkout of upstream termux-app.
 
-Two edits only:
-  1. app/src/main/AndroidManifest.xml  -> register EditorActivity
+Three edits only:
+  1. app/src/main/AndroidManifest.xml               -> register EditorActivity
   2. app/src/main/java/com/termux/app/TermuxInstaller.java -> install $PREFIX/bin/eg
+  3. app/src/main/java/com/termux/app/TermuxService.java   -> start EgWatcher
 Nothing else in the upstream source is touched.
 """
 import os
@@ -19,6 +20,7 @@ if "EditorActivity" not in s:
         '\n        <activity\n'
         '            android:name=".app.EditorActivity"\n'
         '            android:exported="true"\n'
+        '            android:launchMode="singleTop"\n'
         '            android:configChanges="orientation|screenSize|keyboardHidden"\n'
         '            android:windowSoftInputMode="adjustResize" />\n'
     )
@@ -31,7 +33,7 @@ if "EditorActivity" not in s:
 else:
     print("manifest already patched")
 
-# ---------------------------------------------------------------- installer
+# ---------------------------------------------------------------- installer (writes the eg command)
 ti = os.path.join(root, "app/src/main/java/com/termux/app/TermuxInstaller.java")
 s = open(ti, encoding="utf-8").read()
 if "installEgCommand" in s:
@@ -72,7 +74,8 @@ else:
                 "  /*) T=\\"$1\\" ;;\\n" +
                 "  *)  T=\\"$(pwd)/$1\\" ;;\\n" +
                 "esac\\n" +
-                "/system/bin/am start -n com.termux/com.termux.app.EditorActivity --es file \\"$T\\"\\n";
+                "echo \\"$T|$$\\" > \\"$HOME/.eg_open\\"\\n" +
+                "echo \\"Editor khul raha hai: $T\\"\\n";
             FileOutputStream out = new FileOutputStream(eg);
             out.write(script.getBytes("UTF-8"));
             out.close();
@@ -90,5 +93,26 @@ else:
     s = s.replace(marker, method + marker, 1)
     open(ti, "w", encoding="utf-8").write(s)
     print("patched installer")
+
+# ---------------------------------------------------------------- service (start the watcher)
+ts = os.path.join(root, "app/src/main/java/com/termux/app/TermuxService.java")
+s = open(ts, encoding="utf-8").read()
+if "EgWatcher" in s:
+    print("service already patched")
+else:
+    old = ('    public void onCreate() {\n'
+           '        Logger.logVerbose(LOG_TAG, "onCreate");\n'
+           '        runStartForeground();\n'
+           '    }')
+    new = ('    public void onCreate() {\n'
+           '        Logger.logVerbose(LOG_TAG, "onCreate");\n'
+           '        runStartForeground();\n'
+           '        EgWatcher.start(this);\n'
+           '    }')
+    if old not in s:
+        raise SystemExit("TermuxService.onCreate anchor not found")
+    s = s.replace(old, new, 1)
+    open(ts, "w", encoding="utf-8").write(s)
+    print("patched service")
 
 print("done")
