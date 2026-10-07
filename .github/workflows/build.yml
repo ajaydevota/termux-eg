@@ -42,8 +42,11 @@ jobs:
 
       - name: Apply eg overlay + patch
         run: |
-          cp -rv overlay/app src/app
+          cp -rv overlay/app/. src/app/
           python3 patch.py src
+          test -f src/app/src/main/java/com/termux/app/EditorActivity.java
+          test -f src/app/src/main/java/com/termux/app/EgWatcher.java
+          test -f src/app/src/main/res/layout/activity_editor.xml
 
       - name: Build (debug, arm64-v8a)
         run: |
