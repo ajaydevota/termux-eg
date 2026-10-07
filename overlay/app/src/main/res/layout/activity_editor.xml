@@ -60,6 +60,22 @@
         android:importantForAutofill="no" />
 
     <HorizontalScrollView
+        android:id="@+id/suggestBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FF202023"
+        android:scrollbars="none"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/suggestRow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="5dp" />
+    </HorizontalScrollView>
+
+    <HorizontalScrollView
         android:id="@+id/keyBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -71,6 +87,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="3dp" />
+            android:padding="5dp" />
     </HorizontalScrollView>
 </LinearLayout>
