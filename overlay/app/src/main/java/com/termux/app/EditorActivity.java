@@ -122,8 +122,9 @@ public class EditorActivity extends Activity {
             b.setPadding(18, 4, 18, 4);
             b.setOnClickListener(v -> {
                 int start = Math.max(mEditor.getSelectionStart(), 0);
+                int end = Math.max(mEditor.getSelectionEnd(), start);
                 String text = k.equals("Tab") ? "    " : k;
-                mEditor.getText().replace(start, Math.max(mEditor.getSelectionEnd(), start), text);
+                mEditor.getText().replace(start, end, text);
             });
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
