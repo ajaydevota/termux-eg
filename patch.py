@@ -21,6 +21,7 @@ if "EditorActivity" not in s:
         '            android:name=".app.EditorActivity"\n'
         '            android:exported="true"\n'
         '            android:launchMode="singleTop"\n'
+        '            android:theme="@style/Theme.Termux.Editor"\n'
         '            android:configChanges="orientation|screenSize|keyboardHidden"\n'
         '            android:windowSoftInputMode="adjustResize" />\n'
     )
